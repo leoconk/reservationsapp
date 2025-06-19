@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Table Availability</title>
+    <link rel="stylesheet" href="{% static 'reservations/style.css' %}">
+</head>
+<body>
+    <div class="container">
+
+        {% if user.is_authenticated %}
+            <p style="text-align: left;">
+                Welcome, <strong>{{ user.username }}</strong> —
+                <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-button">Log out</button>
+                </form>
+            </p>
+        {% else %}
+            <p style="text-align: right;">
+                <a href="{% url 'login' %}">Log in</a> |
+                <a href="{% url 'register' %}">Register</a>
+            </p>
+        {% endif %}
+
+        <hr style="margin: 10px 0;">
+
+        <h2>Disponibilidad <strong>{{ selected_date|date:"d/m/Y" }}</strong></h2>
+
+        <form method="get" style="margin-bottom: 20px;">
+            <label for="date">Seleccionar fecha :</label>
+            <input type="date" id="date" name="date" value="{{ selected_date|date:'Y-m-d' }}">
+            <button type="submit">Comprobar disponibilidad</button>
+        </form>
+
+        <div class="grid-container">
+            {% for table in table_data %}
+                <div class="grid-item">
+                    <strong>Mesa {{ table.id }}</strong><br>
+                    Capacidad: {{ table.capacity }} personas
+
+                    <div class="availability" style="margin-top: 8px;">
+                        {% if table.slots %}
+                            {% for slot in table.slots %}
+                                <div class="slot-row">
+                                    <span>{{ slot.time }}</span>
+                                    {% if user.is_authenticated and slot.reservation_id %}
+                                        <form method="post" action="{% url 'delete_reservation' slot.reservation_id %}" onsubmit="return confirm('Are you sure you want to cancel this reservation?');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="cancel-btn">❌</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <span>✅ Disponible</span>
+                        {% endif %}
+                    </div>
+
+                    <a href="{% url 'reserve_table' table.id %}?date={{ selected_date|date:'Y-m-d' }}">
+                        <button type="button" style="margin-top: 10px;">Cargar reserva</button>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if show_home_button %}
+            <p style="text-align: center; margin-top: 30px;">
+                <a href="{% url 'home' %}">
+                    <button type="submit" class="back-button">Volver a reservas</button>
+                </a>
+            </p>
+        {% endif %}
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dateInput = document.querySelector('input[type="date"]');
+            if (dateInput) {
+                dateInput.addEventListener('change', () => {
+                    dateInput.form.submit();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

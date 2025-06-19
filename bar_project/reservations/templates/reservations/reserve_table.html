@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reserve Table {{ table.id }}</title>
+    <link rel="stylesheet" href="{% static 'reservations/style.css' %}">
+</head>
+<body>
+    <h1>Reservar mesa {{ table.id }}</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <p>Fecha de reserva: <strong>{{ selected_date|date:"d/m/Y" }}</strong></p>
+        <button type="submit">Confirmar reserva</button>
+    </form>
+
+    <p style="text-align: center;">
+        <a href="{% url 'table_list' %}">
+            <button type="submit" class="back-button">Volver a reservas</button>
+        </a>
+    </p>
+</body>
+</html>

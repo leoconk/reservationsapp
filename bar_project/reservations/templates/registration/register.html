@@ -1,0 +1,17 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" href="{% static 'reservations/style.css' %}">
+</head>
+<body>
+    <form method="post">
+        <h1>Register</h1>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Register</button>
+        <p>Already have an account? <a href="{% url 'login' %}">Log in here</a>.</p>
+    </form>
+</body>
+</html>

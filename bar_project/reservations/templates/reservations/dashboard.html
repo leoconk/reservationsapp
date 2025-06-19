@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Reservations</title>
+    <link rel="stylesheet" href="{% static 'reservations/style.css' %}">
+</head>
+<body>
+    <h1>All Reservations</h1>
+
+    <form method="get" style="text-align: center; margin-bottom: 20px;">
+        <label>Select a date:
+            <input type="date" name="date" value="{{ selected_date }}">
+        </label>
+        <button type="submit">Filtrar fecha</button>
+        <a href="{% url 'dashboard' %}">
+            <button type="button">Clear</button>
+        </a>
+    </form>
+
+    {% if reservations %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Table</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in reservations %}
+                    <tr>
+                        <td>{{ res.table.id }}</td>
+                        <td>{{ res.start_time|date:"d/m/Y" }}</td>
+                        <td>{{ res.start_time|time:"H:i" }} - {{ res.end_time|time:"H:i" }}</td>
+                        <td>{{ res.name }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="text-align: center; margin-top: 30px;">
+            {% if selected_date %}
+                No reservations found for {{ selected_date|date:"d/m/Y" }}.
+            {% else %}
+                No reservations found.
+            {% endif %}
+        </p>
+    {% endif %}
+
+    <p style="text-align: center; margin-top: 30px;">
+        <a href="{% url 'home' %}">
+            <button type="submit" class="back-button">Back to Home</button>
+        </a>
+    </p>
+</body>
+</html>

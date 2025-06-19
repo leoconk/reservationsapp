@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bar Reservation</title>
+    <link rel="stylesheet" href="{% static 'reservations/style.css' %}">
+</head>
+<body>
+
+    {% if user.is_authenticated %}
+        <p style="text-align: left;">
+            Welcome, <strong>{{ user.username }}</strong> —
+            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="logout-button">Log out</button>
+            </form>
+        </p>
+    {% else %}
+        <p style="text-align: left;">
+            <a href="{% url 'login' %}">Log in</a> |
+            <a href="{% url 'register' %}">Register</a>
+        </p>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        <p><a href="{% url 'dashboard' %}">Mis reservas</a></p>
+    {% endif %}
+
+    {% if show_table_list_button %}
+        <p style="text-align: left; margin-top: 20px;">
+            <a href="{% url 'table_list' %}">
+                <button type="submit" class="back-button">Ver mesas disponibles </button>
+            </a>
+        </p>
+    {% endif %}
+
+</body>
+</html>
